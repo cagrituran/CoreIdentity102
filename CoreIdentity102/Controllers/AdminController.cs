@@ -56,9 +56,35 @@ namespace CoreIdentity102.Controllers
             }
             return View(model);
         }
-        public IActionResult RolAdd()
+        public async Task<IActionResult> RolAdd(string id)
         {
-            return View();
+            AppUser user = await _userManager.FindByIdAsync(id);
+            List<AppRole> allRoles = _roleManager.Roles.ToList();
+            List<string> userRoles = await _userManager.GetRolesAsync(user) as List<string>;
+            List<RoleAssignViewModel> assignRoles = new List<RoleAssignViewModel>();
+            allRoles.ForEach(role => assignRoles.Add(new RoleAssignViewModel
+            {
+                HasAssign = userRoles.Contains(role.Name),
+                RoleId = role.Id,
+                RoleName = role.Name
+            }));
+
+            return View(assignRoles);
+        }
+        [HttpPost]
+        public async Task<IActionResult> RolAdd(List<RoleAssignViewModel> modelList, string id)
+        {
+            AppUser user = await _userManager.FindByIdAsync(id);
+            foreach (RoleAssignViewModel role in modelList)
+            {
+                if (role.HasAssign)
+                    await _userManager.AddToRoleAsync(user, role.RoleName);
+                else
+                    await _userManager.RemoveFromRoleAsync(user, role.RoleName);
+            }
+            return RedirectToAction("Index", "Admin");
+
+            
         }
     }
 }
