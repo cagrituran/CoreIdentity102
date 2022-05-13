@@ -1,0 +1,46 @@
+﻿@model List<AppUser>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1>Index</h1>
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>UserId</th>
+        <th>UserName</th>
+        <th>Email</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    @if (Model.Count==0)
+    {
+        <tr>
+            <td colspan="3" class="bg-danger">
+                Uye Kaydi bulunamadi
+            </td>
+        </tr>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.UserName</td>
+                <td>@item.Email</td>
+                <td>
+                    @Html.ActionLink("RolAdd", "RolAdd", new { @item.Id })
+
+                </td>
+
+            </tr>
+
+        }
+    }
+
+    </tbody>
+</table>
